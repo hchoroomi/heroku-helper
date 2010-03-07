@@ -25,6 +25,22 @@ module HerokuHelper
       end
     end
 
+    def restart
+      cmd 'heroku restart', '--app', application_name
+    end
+
+    def set_vars
+      environment_variables.each do |key, value|
+        cmd 'heroku config:add', "#{key}=#{value}", '--app', application_name
+      end
+    end
+
+    def add_addons
+      addons.each do |addon|
+        cmd 'heroku addons:add', addon, '--app', application_name
+      end
+    end
+
     private
 
     def load_configuration
@@ -40,15 +56,22 @@ module HerokuHelper
 
     def self.configuration_format
       <<-FORMAT
-  production:
-    app_name: heroku-application-name
-    domain: example.com
-    contributors:
-      - dev1@example.com
-      - dev2@example.com
+production:
+  app_name: sample-app
+  domain: sample-app.com
+  contributors:
+    - dev1@production.com
+    - dev2@production.com
+  environment_variables:
+    AWS: aws_cred
+    REDIS_URL: redis_url
+  addons:
+    - custom_domains
+    - gmail_smtp email=foo@bar.com password=sekret
       FORMAT
     end
 
+    # TODO rename to prevent confusion w/ heroku config
     def config(key)
       raise 'Cannot find specified key in the YAML file' unless @config[environment].has_key?(key)
       @config[environment][key]
@@ -60,6 +83,14 @@ module HerokuHelper
 
     def contributors
       config('contributors')
+    end
+
+    def environment_variables
+      config('environment_variables')
+    end
+
+    def addons
+      config('addons')
     end
 
     def cmd(*command)

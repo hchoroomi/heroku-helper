@@ -7,7 +7,7 @@ module HerokuHelper
         :env     => 'production',
         :command => 'deploy'
       }
-      available_commands = %w(deploy share)
+      available_commands = %w(deploy share restart set_vars add_addons)
       mandatory_options = %w(  )
 
       parser = OptionParser.new do |opts|
@@ -27,6 +27,8 @@ module HerokuHelper
                 "deploy command runs migrations automatically") { |arg| options[:command] = arg }
         opts.on("-f", "--format",
                 "Shows deploy.yml file format.") { stdout.puts Heroku.configuration_format; exit }
+        opts.on("-v", "--version",
+                "Show the #{File.basename($0)} version number and quit.") { stdout.puts "#{File.basename($0)} #{HerokuHelper::VERSION}"; exit }
         opts.on("-h", "--help", "Show this help message.") { stdout.puts opts; exit }
         opts.parse!(arguments)
 
