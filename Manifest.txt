@@ -1,0 +1,8 @@
+History.txt
+Manifest.txt
+README.rdoc
+Rakefile
+bin/heroku-helper
+lib/heroku-helper.rb
+lib/heroku-helper/cli.rb
+lib/heroku-helper/heroku.rb
