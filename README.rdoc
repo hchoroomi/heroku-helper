@@ -8,11 +8,31 @@ Heroku deployment helper
 
 == SYNOPSIS:
 
-$ heroku-deploy -c share -e staging
-$ heroku-deploy -c deploy -e production
+  $ heroku-deploy -c share -e staging
+  $ heroku-deploy -c deploy -e production
 
-deploy.yml format:
-TODO add when finalized
+heroku_deploy.rb format:
+
+  environment :production do
+    set :app_name, 'heroku-application-name'
+    set :domain,   'example.com'
+    set :contributors, %w(dev1@example.com dev2@example.com)
+    set :environment_variables, {
+      'REDIS_URL' => 'redis://localhost:6379/0'
+    }
+    set :addons, [
+      'custom_domains',
+      'gmail_smtp email=foo@bar.com password=sekret'
+    ]
+
+    hook :before, :share do
+      puts 'hello before share'
+    end
+
+    hook :after, :deploy do
+      puts 'hello after deploy'
+    end
+  end
 
 == INSTALL:
 

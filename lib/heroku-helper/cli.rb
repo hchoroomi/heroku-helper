@@ -23,10 +23,9 @@ module HerokuHelper
                 "Set environment. Default is production.") { |arg| options[:env] = arg }
         opts.on("-c", "--command=COMMAND", String,
                 "Heroku command to run. Default is deploy.",
-                "Available commands: #{available_commands.join(', ')}",
-                "deploy command runs migrations automatically") { |arg| options[:command] = arg }
+                "Available commands: #{available_commands.join(', ')}") { |arg| options[:command] = arg }
         opts.on("-f", "--format",
-                "Shows deploy.yml file format.") { stdout.puts Heroku.configuration_format; exit }
+                "Shows deploy.yml file format.") { stdout.puts DeploymentConfiguration.configuration_format; exit }
         opts.on("-v", "--version",
                 "Show the #{File.basename($0)} version number and quit.") { stdout.puts "#{File.basename($0)} #{HerokuHelper::VERSION}"; exit }
         opts.on("-h", "--help", "Show this help message.") { stdout.puts opts; exit }
@@ -38,7 +37,7 @@ module HerokuHelper
       end
 
       raise "Command '#{options[:command]}' not found" unless available_commands.include?(options[:command])
-      Heroku.new(options[:env]).send(options[:command])
+      Heroku.new(options[:env]).run(options[:command])
     end
   end
 end

@@ -4,7 +4,7 @@ module HerokuHelper
     attr_accessor :environment
 
     def initialize(env)
-      @environment = env
+      @environment = env.intern
       load_configuration
       puts "#{application_name} - #{environment}\n"      
     end
@@ -16,7 +16,6 @@ module HerokuHelper
       else
         cmd("git push -f git-remote-for-#{application_name}")
       end
-      cmd("heroku rake db:migrate --app #{application_name}")
     end
 
     def share
@@ -41,12 +40,20 @@ module HerokuHelper
       end
     end
 
+    def run(command)
+      command = command.intern
+      run_before_hook(command)
+      send(command)
+      run_after_hook(command)
+    end
+
     private
 
     def load_configuration
-      deployment_configuration = 'deploy.yml'
+      deployment_configuration = 'heroku_deploy.rb'
       if File.exist?(deployment_configuration)
-        @config = YAML.load_file(deployment_configuration)
+        DeploymentConfiguration.configure(deployment_configuration)
+        @config = DeploymentConfiguration.configuration
       else
         puts "No deployment configuration found (looking for: #{deployment_configuration})"
         puts "Run #{File.basename($0)} -f for more information."
@@ -54,26 +61,9 @@ module HerokuHelper
       end
     end
 
-    def self.configuration_format
-      <<-FORMAT
-production:
-  app_name: sample-app
-  domain: sample-app.com
-  contributors:
-    - dev1@production.com
-    - dev2@production.com
-  environment_variables:
-    AWS: aws_cred
-    REDIS_URL: redis_url
-  addons:
-    - custom_domains
-    - gmail_smtp email=foo@bar.com password=sekret
-      FORMAT
-    end
-
-    # TODO rename to prevent confusion w/ heroku config
     def config(key)
-      raise 'Cannot find specified key in the YAML file' unless @config[environment].has_key?(key)
+      key = key.intern
+      raise 'Cannot find specified key in the deployment file' unless @config[environment].has_key?(key)
       @config[environment][key]
     end
 
@@ -97,6 +87,20 @@ production:
       command = command.join(' ')
       puts "Executing: #{command}"
       `#{command}`
+    end
+
+    def run_before_hook(command)
+      run_hook :before, command
+    end
+
+    def run_after_hook(command)
+      run_hook :after, command
+    end
+
+    def run_hook(stage, command)
+      if config('hooks') && config('hooks')[command] && config('hooks')[command][stage]
+        config('hooks')[command][stage].call
+      end
     end
 
   end

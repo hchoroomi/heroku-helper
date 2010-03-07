@@ -5,6 +5,7 @@
 
 require 'rubygems'
 require File.expand_path(File.dirname(__FILE__) + "/../lib/heroku-helper")
+require "heroku-helper/deployment_configuration"
 require "heroku-helper/cli"
 require "heroku-helper/heroku"
 

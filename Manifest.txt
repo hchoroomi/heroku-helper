@@ -4,5 +4,6 @@ README.rdoc
 Rakefile
 bin/heroku-helper
 lib/heroku-helper.rb
+lib/heroku-helper/deployment_configuration.rb
 lib/heroku-helper/cli.rb
 lib/heroku-helper/heroku.rb
