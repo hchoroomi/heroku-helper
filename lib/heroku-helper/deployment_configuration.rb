@@ -1,6 +1,7 @@
 def environment(env, &block)
-  HerokuHelper::DeploymentConfiguration.current_environment = env
-  HerokuHelper::DeploymentConfiguration.configuration[env]  = {}
+  HerokuHelper::DeploymentConfiguration.current_environment        = env
+  HerokuHelper::DeploymentConfiguration.configuration[env]         = {}
+  HerokuHelper::DeploymentConfiguration.configuration[env][:hooks] = {}
   block.call
 end
 
@@ -11,7 +12,6 @@ end
 
 def hook(stage, command, &block)
   configuration = HerokuHelper::DeploymentConfiguration.configuration[HerokuHelper::DeploymentConfiguration.current_environment]
-  configuration[:hooks]               ||= {}
   configuration[:hooks][command]      ||= {}
   configuration[:hooks][command][stage] = block
 end
