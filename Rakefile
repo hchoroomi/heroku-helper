@@ -12,8 +12,8 @@ Hoe.plugin :newgem
 # Run 'rake -T' to see list of generated tasks (from gem root directory)
 $hoe = Hoe.spec 'heroku-helper' do
   self.developer 'ELC Technologies', 'hchoroomi@elctech.com'
-  self.rubyforge_name       = self.name
-  # self.extra_deps         = [['activesupport','>= 2.0.2']]
+  self.rubyforge_name = self.name
+  self.extra_deps     = [['heroku','>= 1.8.3']]
 
 end
 
