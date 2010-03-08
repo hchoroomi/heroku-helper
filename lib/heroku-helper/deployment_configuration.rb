@@ -16,6 +16,14 @@ def hook(stage, command, &block)
   configuration[:hooks][command][stage] = block
 end
 
+def before(command, &block)
+  hook(:before, command, &block)
+end
+
+def after(command, &block)
+  hook(:after, command, &block)
+end
+
 module HerokuHelper
   class DeploymentConfiguration
 
@@ -44,12 +52,12 @@ environment :production do
     'gmail_smtp email=foo@bar.com password=sekret'
   ]
 
-  hook :before, :share do
-    puts 'hello before share'
+  before :share do
+    # run code before sharing
   end
 
-  hook :after, :deploy do
-    puts 'hello after deploy'
+  after :deploy do
+    # run code after deploy
   end
 end
       FORMAT

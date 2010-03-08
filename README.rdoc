@@ -8,8 +8,8 @@ Heroku deployment helper
 
 == SYNOPSIS:
 
-  $ heroku-deploy -c share -e staging
-  $ heroku-deploy -c deploy -e production
+  $ heroku-helper -c share -e staging
+  $ heroku-helper -c deploy -e production
 
 heroku_deploy.rb format:
 
@@ -25,12 +25,12 @@ heroku_deploy.rb format:
       'gmail_smtp email=foo@bar.com password=sekret'
     ]
 
-    hook :before, :share do
-      puts 'hello before share'
+    before :share do
+      # run code before sharing
     end
 
-    hook :after, :deploy do
-      puts 'hello after deploy'
+    after :deploy do
+      # run code after deploy
     end
   end
 
